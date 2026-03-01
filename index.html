@@ -1,0 +1,2555 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Aether</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: #efece8;
+  color: #141414;
+  overflow-x: hidden;
+}
+
+.landing {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 24px;
+  transition: opacity 0.6s ease;
+  z-index: 20;
+}
+
+.landing.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.landing-headline {
+  max-width: 900px;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+}
+
+.landing-subtitle {
+  margin-top: 14px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1.05rem;
+}
+
+.landing-credit {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.btn {
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.28s ease;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.landing-btn {
+  margin-top: 28px;
+  background: #fff;
+  color: #000;
+  padding: 14px 34px;
+  font-weight: 600;
+}
+
+.landing-btn:hover {
+  background: #000;
+  color: #fff;
+  transform: scale(1.02);
+  box-shadow: 0 12px 28px rgba(255, 255, 255, 0.18);
+}
+
+.app {
+  min-height: 100vh;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.app.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 28px;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.sidebar {
+  background: #f6f3ef;
+  border: 1px solid #e1ddd7;
+  border-radius: 24px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: sticky;
+  top: 32px;
+  align-self: start;
+  max-height: calc(100vh - 64px);
+  overflow: auto;
+}
+
+.sidebar h3 {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7f7770;
+  margin-bottom: 8px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tab {
+  border: none;
+  text-align: left;
+  padding: 13px 16px;
+  border-radius: 14px;
+  background: transparent;
+  color: #23201d;
+  cursor: pointer;
+  transition: all 0.24s ease;
+}
+
+.tab:hover {
+  background: #ece7e1;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.tab.active {
+  background: #191919;
+  color: #fff;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+}
+
+.workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.hero-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-inner {
+  width: min(760px, 100%);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header h1 {
+  font-size: clamp(2.3rem, 6vw, 4.2rem);
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+
+.header p {
+  margin-top: 8px;
+  color: #746c65;
+}
+
+.input-box {
+  width: min(760px, 100%);
+  margin: 0 auto;
+  background: #fcfbf9;
+  border: 1px solid #dfd9d2;
+  border-radius: 24px;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.06);
+  padding: 16px;
+}
+
+textarea {
+  width: 100%;
+  height: 132px;
+  border: 1px solid #ddd6ce;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  resize: none;
+  font-size: 15px;
+  color: #1f1f1f;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #9f968e;
+  box-shadow: 0 0 0 3px rgba(31, 31, 31, 0.08);
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.chips {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.chip {
+  border: 1px solid #ded7cf;
+  background: #f5f1eb;
+  color: #4d4640;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chip:hover {
+  transform: translateY(-1px);
+  background: #ebe4dd;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.primary-btn {
+  background: #111;
+  color: #fff;
+  padding: 12px 24px;
+  font-weight: 500;
+}
+
+.primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22), 0 0 18px rgba(17, 17, 17, 0.22);
+}
+
+.secondary-btn {
+  background: #ece7e1;
+  color: #2b2825;
+  padding: 12px 20px;
+  font-weight: 500;
+  display: none;
+}
+
+.secondary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+.workspace-content {
+  display: none;
+}
+
+.workspace-topbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.workspace-helper {
+  color: #7a726a;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.content-panel {
+  background: #f9f6f2;
+  border: 1px solid #e3ded8;
+  border-radius: 24px;
+  padding: 28px;
+  min-height: 480px;
+}
+
+.card {
+  background: #fdfdfd;
+  border: 1px solid #eaeaea;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  line-height: 1.62;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.09);
+}
+
+.section-title {
+  font-size: clamp(1.75rem, 3vw, 2rem);
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.bullet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.bullet-list span::before {
+  content: "→ ";
+  color: #b7afa6;
+}
+
+.type-item {
+  padding: 14px 0;
+  border-bottom: 1px solid #f0ebe5;
+}
+
+.type-item:last-child {
+  border-bottom: none;
+}
+
+.type-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.preview-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.preview-input-wrap label {
+  font-size: 0.8rem;
+  color: #6f675f;
+}
+
+.preview-input {
+  border: 1px solid #ddd5cd;
+  background: #fff;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.86rem;
+  min-width: 200px;
+}
+
+.font-sample {
+  margin-top: 8px;
+  font-size: 1.55rem;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.swatch {
+  border-radius: 12px;
+  height: 72px;
+  border: 1px solid #e1ddd8;
+}
+
+.social-tabs {
+  display: inline-flex;
+  gap: 6px;
+  background: #f1ede8;
+  border-radius: 999px;
+  padding: 4px;
+  margin-bottom: 14px;
+}
+
+.social-tab {
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+  color: #5f5750;
+  transition: all 0.2s ease;
+}
+
+.social-tab.active {
+  background: #111;
+  color: #fff;
+}
+
+.mood-tabs {
+  display: inline-flex;
+  gap: 6px;
+  background: #f1ede8;
+  border-radius: 999px;
+  padding: 4px;
+  margin-bottom: 14px;
+}
+
+.mood-tab {
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+  color: #5f5750;
+  transition: all 0.2s ease;
+}
+
+.mood-tab.active {
+  background: #111;
+  color: #fff;
+}
+
+.mood-grid {
+  column-count: 3;
+  column-gap: 10px;
+}
+
+.mood-image {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  border: 1px solid #e8e2db;
+  transition: transform 0.24s ease, box-shadow 0.24s ease;
+  break-inside: avoid;
+}
+
+.mood-image:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+.empty-state {
+  padding: 20px;
+  border-radius: 14px;
+  background: #f6f2ed;
+  color: #7a7168;
+  border: 1px solid #e4ddd6;
+}
+
+.footer-download {
+  display: none;
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.footer-download .btn {
+  background: #111;
+  color: #fff;
+  padding: 12px 24px;
+  width: 100%;
+  justify-content: center;
+  display: inline-flex;
+}
+
+.loading-hint {
+  margin-top: 10px;
+  min-height: 20px;
+  font-size: 0.88rem;
+  color: #7a726a;
+}
+
+.fade-in {
+  animation: fadeIn 0.24s ease;
+}
+
+.fade-out {
+  animation: fadeOut 0.18s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.app.hero-mode .layout {
+  grid-template-columns: 1fr;
+}
+
+.app.hero-mode .sidebar,
+.app.hero-mode .workspace-content {
+  display: none;
+}
+
+.app.workspace-mode .hero-shell {
+  min-height: auto;
+  justify-content: flex-start;
+}
+
+.app.workspace-mode .hero-inner {
+  width: 100%;
+  text-align: left;
+  gap: 12px;
+}
+
+.app.workspace-mode .header h1 {
+  font-size: 2rem;
+}
+
+.app.workspace-mode .input-box {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border-radius: 18px;
+  padding: 12px;
+}
+
+.app.workspace-mode textarea {
+  height: 84px;
+}
+
+.app.workspace-mode .workspace-content {
+  display: block;
+  margin-top: 52px;
+}
+
+.app.workspace-mode .secondary-btn {
+  display: inline-flex;
+}
+
+#clearBtn,
+#saveIdeaBtn,
+#savedIdeasBtn,
+.modal .secondary-btn {
+  display: inline-flex;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 12, 12, 0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  z-index: 30;
+}
+
+.modal.open {
+  display: flex;
+}
+
+.modal-sheet {
+  width: min(980px, 100%);
+  max-height: 88vh;
+  overflow: auto;
+  background: #fbfaf8;
+  border-radius: 22px;
+  border: 1px solid #e3ddd6;
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.2);
+  padding: 30px;
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.sheet-card {
+  background: #fff;
+  border: 1px solid #ece6df;
+  border-radius: 16px;
+  padding: 18px;
+}
+
+@media (max-width: 900px) {
+  .mood-grid {
+    column-count: 2;
+  }
+  .sheet-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+  .sidebar {
+    order: 2;
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+.site-footer {
+  text-align: center;
+  padding: 20px 10px 28px;
+  color: #8b837c;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.saved-wrap {
+  position: relative;
+}
+
+.saved-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 280px;
+  max-height: 240px;
+  overflow: auto;
+  border: 1px solid #e2dbd3;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+  padding: 8px;
+  display: none;
+  z-index: 12;
+}
+
+.saved-menu.open {
+  display: block;
+}
+
+.saved-item {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: #f8f5f1;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.saved-item:hover {
+  background: #ece6de;
+}
+
+.saved-item small {
+  display: block;
+  color: #756d66;
+  margin-top: 4px;
+}
+
+.copy-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.copy-row:hover {
+  background: #f4f0eb;
+}
+
+.copy-icon {
+  border: none;
+  background: transparent;
+  color: #8f857c;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, color 0.15s ease;
+  font-size: 0.85rem;
+}
+
+.copy-row:hover .copy-icon {
+  opacity: 1;
+}
+
+.copy-icon:hover {
+  color: #111;
+}
+
+.toast-stack {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 50;
+}
+
+.toast {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.86rem;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.25);
+  animation: toastIn 0.2s ease;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="landing" id="landing">
+  <h1 class="landing-headline">For designers who don’t use templates but build worlds.</h1>
+  <p class="landing-subtitle">Aether transforms ideas into visual systems.</p>
+  <button class="btn landing-btn" onclick="enterApp()">Start Creating</button>
+  <div class="landing-credit">
+    <div>Aether</div>
+    <div>Creative Direction Generator</div>
+    <div>Built by Shloka Vikrant</div>
+  </div>
+</div>
+
+<div class="app hero-mode" id="app">
+  <div class="layout">
+    <aside class="sidebar">
+      <h3>Workspace</h3>
+      <div class="sidebar-nav">
+        <button class="tab" data-tab="brandNames">Brand Names</button>
+        <button class="tab" data-tab="typography">Typography</button>
+        <button class="tab" data-tab="colors">Colors</button>
+        <button class="tab" data-tab="products">Products</button>
+        <button class="tab" data-tab="social">Social Strategy</button>
+        <button class="tab" data-tab="moodboard">Moodboard</button>
+        <button class="tab" data-tab="brandPositioning">Brand Positioning</button>
+        <button class="tab" data-tab="logoConcepts">Logo Concepts</button>
+        <button class="tab" data-tab="packagingIdeas">Packaging Ideas</button>
+        <button class="tab" data-tab="marketingCampaignConcepts">Marketing Campaign Concepts</button>
+      </div>
+      <div class="footer-download" id="footerDownload">
+        <button class="btn" id="downloadBtn">Download Creative Brief</button>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <section class="hero-shell" id="heroShell">
+        <div class="hero-inner">
+          <div class="header">
+            <h1>Aether</h1>
+            <p>Ideas → Visual Systems</p>
+          </div>
+
+          <div class="input-box">
+            <textarea id="conceptInput" placeholder="Describe your design concept..."></textarea>
+            <div class="actions">
+              <button class="btn primary-btn" id="generateBtn" onclick="toggleGenerate()">Generate Direction</button>
+              <button class="btn secondary-btn" id="clearBtn">Clear</button>
+              <button class="btn secondary-btn" id="saveIdeaBtn">Save Idea</button>
+              <div class="saved-wrap">
+                <button class="btn secondary-btn" id="savedIdeasBtn">Saved Ideas</button>
+                <div class="saved-menu" id="savedIdeasMenu"></div>
+              </div>
+              <button class="btn secondary-btn" id="newBtn">Start New Idea</button>
+            </div>
+            <div class="loading-hint" id="loadingHint"></div>
+            <div class="chips">
+              <button class="chip" data-concept="Banana Beauty">Banana Beauty</button>
+              <button class="chip" data-concept="Volcano Energy">Volcano Energy</button>
+              <button class="chip" data-concept="Galaxy Jewelry">Galaxy Jewelry</button>
+              <button class="chip" data-concept="Pizza Perfume">Pizza Perfume</button>
+              <button class="chip" data-concept="Rocket Sneakers">Rocket Sneakers</button>
+              <button class="chip" data-concept="Cotton Candy Skincare">Cotton Candy Skincare</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="workspace-content" id="workspaceContent">
+        <div class="workspace-topbar">
+          <button class="btn secondary-btn" id="snapshotBtn">Export Creative Brief</button>
+          <button class="btn secondary-btn" id="copySnapshotBtn">Copy Brand Snapshot</button>
+        </div>
+        <p class="workspace-helper">Explore the workspace to view typography, colors, products, social strategy, moodboard direction, and additional creative direction sections.</p>
+        <div class="content-panel">
+          <div class="card" id="contentCard"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div>Aether</div>
+  <div>Creative Direction Generator</div>
+  <div>Built by Shloka Vikrant</div>
+</footer>
+
+<div class="modal" id="snapshotModal">
+  <div class="modal-sheet">
+    <div class="modal-head">
+      <h2>Creative Brief Preview</h2>
+      <button class="btn secondary-btn" id="closeSnapshotBtn">Close</button>
+    </div>
+    <div class="sheet-grid" id="snapshotContent"></div>
+  </div>
+</div>
+
+<div class="toast-stack" id="toastStack"></div>
+
+<script>
+
+const aetherData = {
+
+banana: {
+
+brandNames: [
+"Banana Beat",
+"Peel Beauty",
+"Golden Pulp",
+"Banana Gloss",
+"Peel Pop",
+"Tropic Tint",
+"Banana Bloom",
+"FruitFlush",
+"Peel Palette",
+"Banana Babe"
+],
+
+typography: [
+"Baloo 2 – playful rounded display",
+"Poppins – clean geometric sans",
+"Fredoka – soft bubble typography",
+"Nunito – friendly modern sans",
+"Quicksand – light airy sans",
+"Pacifico – tropical script accent",
+"Rubik – smooth rounded sans",
+"Montserrat – bold modern heading",
+"Comfortaa – bubbly cosmetic type",
+"Lilita One – chunky playful display"
+],
+
+colors: [
+"#FFD84D",
+"#FFF3B0",
+"#F4C430",
+"#FFE066",
+"#FFF8D6",
+"#D6A800",
+"#FAD02E",
+"#FFF1A8",
+"#CFA000",
+"#FFFCE8"
+],
+
+products: [
+"Banana Cream Lip Gloss",
+"Golden Peel Highlighter",
+"Tropic Banana Blush",
+"Banana Balm Hydrator",
+"Banana Tint Lip Oil",
+"Banana Pop Eyeshadow",
+"Fruit Glow Setting Spray",
+"Banana Skin Primer",
+"Banana Smooth Concealer",
+"Golden Peel Body Shimmer"
+],
+
+social:{
+editorial:[
+"Yellow gradient product flatlays",
+"Banana slice macro texture shots",
+"Tropical fruit beauty portraits",
+"Floating banana makeup shots",
+"Glossy yellow studio lighting",
+"Banana peel texture backdrops",
+"Fruit themed editorial makeup",
+"Minimal yellow cosmetic packaging",
+"Banana smoothie aesthetic visuals",
+"Golden glow beauty lighting"
+],
+tiktok:[
+"Banana makeup transformation",
+"Banana lip gloss ASMR",
+"Fruit inspired makeup routine",
+"Banana peel packaging reveal",
+"Get ready with me banana theme",
+"Yellow makeup challenge",
+"Banana aesthetic product unboxing",
+"Banana glow skincare routine",
+"Fruit makeup tutorial",
+"Banana beauty day vlog"
+],
+ads:[
+"Glossy banana peel product ads",
+"Tropical billboard cosmetics",
+"Yellow subway cosmetic posters",
+"Animated banana product reveal",
+"Fruit explosion motion graphics",
+"Banana glow beauty campaign",
+"Minimal yellow product posters",
+"Banana themed beauty launch ad",
+"Cosmetic peel animation ad",
+"Tropical luxury cosmetic visuals"
+]
+}
+
+},
+
+cinnamonRollShampoo:{
+
+brandNames:[
+"CinnaCrown",
+"Roll & Rinse",
+"Sweet Spiral Hair",
+"Velvet Cinnamon",
+"CinnaSilk",
+"SugarRoll Haircare",
+"Spice Gloss",
+"Swirl Shampoo",
+"Caramel Crown",
+"Golden Roll Hair"
+],
+
+typography:[
+"Recoleta – warm editorial serif",
+"Playfair Display – elegant dessert luxury",
+"DM Serif – soft premium serif",
+"Poppins – modern clean sans",
+"Quicksand – soft rounded sans",
+"Pacifico – sweet bakery script",
+"Libre Baskerville – luxury serif",
+"Cormorant – refined beauty serif",
+"Nunito – smooth friendly sans",
+"Canela – editorial fragrance serif"
+],
+
+colors:[
+"#C47A2C",
+"#D89B5B",
+"#F5E2C8",
+"#A0522D",
+"#F2C29B",
+"#8B4513",
+"#FFE4C4",
+"#E8B384",
+"#FFF4E6",
+"#B87333"
+],
+
+products:[
+"Cinnamon Swirl Shampoo",
+"Sweet Roll Conditioner",
+"CinnaGloss Hair Mask",
+"Spice Silk Hair Oil",
+"Cinnamon Root Serum",
+"Caramel Curl Cream",
+"Sugar Shine Spray",
+"Velvet Roll Leave-In",
+"Spiced Volume Mousse",
+"Cinnamon Hair Perfume"
+],
+
+social:{
+editorial:[
+"Cinnamon texture macro shots",
+"Hair product with pastry visuals",
+"Warm bakery aesthetic shoots",
+"Cinnamon powder editorial lighting",
+"Caramel toned beauty portraits",
+"Haircare flatlays with pastries",
+"Soft brown gradient backgrounds",
+"Cinnamon swirl concept visuals",
+"Minimal bakery inspired product shoots",
+"Luxury dessert haircare editorials"
+],
+tiktok:[
+"Cinnamon hair routine",
+"Sweet scent reaction videos",
+"Hair glow transformation",
+"Bakery aesthetic GRWM",
+"Haircare ASMR application",
+"Cinnamon shine routine",
+"Morning hair ritual videos",
+"Texture swirl mixing videos",
+"Hair perfume routine",
+"Shiny hair before/after"
+],
+ads:[
+"Cinnamon swirl shampoo ads",
+"Bakery themed subway posters",
+"Warm caramel billboard campaigns",
+"Hair shine motion graphics",
+"Sweet scent haircare campaign",
+"Cinnamon powder cinematic ads",
+"Haircare swirl animation",
+"Golden bakery product visuals",
+"Luxury haircare poster series",
+"Spiced beauty campaign visuals"
+]
+}
+
+},
+
+rocketSneakers:{
+
+brandNames:[
+"Orbit Kicks",
+"Launch Sole",
+"NovaStep",
+"AstroStride",
+"RocketRun",
+"LiftOff Sneakers",
+"HyperOrbit",
+"Cosmo Kicks",
+"Velocity Sole",
+"Stellar Steps"
+],
+
+typography:[
+"Eurostile – futuristic tech type",
+"Orbitron – sci-fi display",
+"Space Grotesk – modern tech sans",
+"Bank Gothic – aerospace type",
+"Exo – futuristic sans",
+"Rajdhani – tech industrial",
+"Michroma – sci-fi square type",
+"Oxanium – mechanical display",
+"Montserrat – modern bold sans",
+"Sora – futuristic clean sans"
+],
+
+colors:[
+"#0B0F1A",
+"#1A1F36",
+"#FF3D00",
+"#00E5FF",
+"#8C9EFF",
+"#F5F5F5",
+"#2B2F4A",
+"#FF9100",
+"#1DE9B6",
+"#3949AB"
+],
+
+products:[
+"RocketRunner Pro",
+"Orbit Trainer",
+"Nova Speed Sneaker",
+"AstroFlex Runner",
+"LiftOff Performance Shoe",
+"Cosmo Street Sneaker",
+"Velocity Trainer",
+"Rocket Carbon Racer",
+"Orbit Daily Trainer",
+"HyperRun Elite"
+],
+
+social:{
+editorial:[
+"Floating sneaker photography",
+"Sci-fi studio lighting",
+"Rocket engine texture shots",
+"Futuristic gradient backdrops",
+"Sneakers levitating visuals",
+"Metallic lighting editorials",
+"Speed motion blur photography",
+"Space themed sneaker shoots",
+"Dark tech studio aesthetics",
+"Futuristic athlete portraits"
+],
+tiktok:[
+"Sneaker drop reveal videos",
+"Rocket speed running tests",
+"Futuristic sneaker transitions",
+"Glow sneaker night runs",
+"Unboxing performance sneakers",
+"Sneaker slow motion runs",
+"Tech sneaker breakdown",
+"Sneaker design sketches reveal",
+"Runner POV videos",
+"Sneaker durability tests"
+],
+ads:[
+"Rocket launch sneaker ads",
+"Futuristic athlete billboards",
+"Neon city sneaker posters",
+"Sci-fi motion sneaker ads",
+"Performance running campaigns",
+"Orbit sneaker launch visuals",
+"Tech sneaker animation ads",
+"High speed sports campaigns",
+"Urban performance posters",
+"Next-gen sneaker commercials"
+]
+}
+
+},
+
+cottonCandySkincare:{
+
+brandNames:[
+"CloudSkin",
+"SugarGlow",
+"CandyDerm",
+"PinkCloud Beauty",
+"FluffSkin",
+"SweetMist Skincare",
+"CandyGlow",
+"PastelSkin",
+"SugarDrop Beauty",
+"CottonSkin"
+],
+
+typography:[
+"Fredoka – soft playful type",
+"Nunito – smooth skincare sans",
+"Quicksand – light friendly sans",
+"Poppins – modern minimal",
+"Pacifico – sweet script accent",
+"Comfortaa – rounded beauty type",
+"Baloo – bubbly display",
+"Montserrat – clean beauty heading",
+"DM Sans – modern skincare type",
+"Sofia Pro – soft luxury sans"
+],
+
+colors:[
+"#FFD1DC",
+"#FFB6E6",
+"#E6D0FF",
+"#FFF5F7",
+"#FEC8D8",
+"#D6F0FF",
+"#F8E1FF",
+"#FFE8F0",
+"#C9E7FF",
+"#FFFFFF"
+],
+
+products:[
+"Cotton Candy Face Cleanser",
+"Sugar Glow Toner",
+"Pink Cloud Moisturizer",
+"Candy Drop Serum",
+"Fluff Hydration Mask",
+"Cotton Candy Lip Balm",
+"Sweet Mist Face Spray",
+"Candy Glow Eye Cream",
+"Cloud Skin Sleeping Mask",
+"Sugar Drop Body Lotion"
+],
+
+social:{
+editorial:[
+"Pastel skincare flatlays",
+"Cotton candy texture visuals",
+"Cloud aesthetic photography",
+"Soft pink studio lighting",
+"Floating skincare products",
+"Gloss pastel backgrounds",
+"Minimal beauty pastel shoots",
+"Candy aesthetic skincare visuals",
+"Soft gradient product photos",
+"Dreamy skincare editorials"
+],
+tiktok:[
+"Skincare routine videos",
+"Pastel aesthetic GRWM",
+"Cloud skin transformation",
+"Cotton candy product ASMR",
+"Soft skin routine reels",
+"Skincare texture videos",
+"Night routine skincare",
+"Morning glow routine",
+"Skincare unboxing videos",
+"Pastel beauty tutorials"
+],
+ads:[
+"Pastel skincare billboards",
+"Cotton candy aesthetic posters",
+"Cloud beauty campaign",
+"Pink glow skincare ads",
+"Soft gradient beauty visuals",
+"Minimal pastel product ads",
+"Skincare motion graphics",
+"Soft glow beauty commercials",
+"Dreamy skincare campaigns",
+"Pastel aesthetic ads"
+]
+}
+
+},
+
+pizzaPerfume:{
+
+brandNames:[
+"Slice No.5",
+"Olio Parfum",
+"Tomato No.5",
+"Pizzeria Luxe",
+"Margherita Noir",
+"Scent di Napoli",
+"Roma Aroma",
+"Pizza Parfum",
+"Basil Noire",
+"Sliced Essence"
+],
+
+typography:[
+"Playfair Display – luxury serif",
+"Canela – editorial serif",
+"Bodoni – classic fashion serif",
+"Didot – high fashion typography",
+"Libre Baskerville – refined serif",
+"Editorial New – magazine serif",
+"DM Serif – luxury elegance",
+"Cormorant Garamond – fashion serif",
+"Prata – elegant perfume typography",
+"Gloock – high contrast serif"
+],
+
+colors:[
+"#C0392B",
+"#8B0000",
+"#F4A261",
+"#E76F51",
+"#F1C27D",
+"#F8D49D",
+"#FFF3E0",
+"#2C2C2C",
+"#5E3023",
+"#D62828"
+],
+
+products:[
+"Slice Eau de Parfum",
+"Tomato Skin Mist",
+"Basil Essence Spray",
+"Olio Body Oil",
+"Margherita Hair Perfume",
+"Napoli Night Parfum",
+"Pizza Noir Collector Bottle",
+"Roma Aroma Travel Spray",
+"Basil & Smoke Candle",
+"Parfum di Pizzeria Limited Edition"
+],
+
+social:{
+editorial:[
+"Pizza ingredient luxury flatlays",
+"Tomato oil macro photography",
+"Italian marble perfume shots",
+"Minimal luxury food textures",
+"Perfume bottle with basil leaves",
+"Dark moody Italian kitchen sets",
+"Luxury ingredient editorial shoots",
+"Glossy tomato lighting setups",
+"Roma restaurant aesthetic visuals",
+"Italian red perfume campaigns"
+],
+tiktok:[
+"Pizza perfume reaction videos",
+"Blind scent test challenge",
+"Luxury food fragrance reveal",
+"Perfume unboxing ASMR",
+"Pizza scent review trend",
+"Food fragrance transformation",
+"Italian scent aesthetic reels",
+"Pizza night fragrance routine",
+"Perfume storytelling video",
+"Scent memory reaction trend"
+],
+ads:[
+"Italian luxury perfume billboard",
+"Roma inspired perfume posters",
+"Tomato oil cinematic ads",
+"Italian street perfume campaign",
+"Luxury marble perfume visuals",
+"Scent of pizza campaign",
+"Perfume bottle motion animation",
+"Red velvet perfume ad",
+"Luxury fragrance launch teaser",
+"Napoli perfume cinematic ad"
+]
+}
+
+},
+
+volcanoEnergyDrink:{
+
+brandNames:[
+"MagmaFuel",
+"LavaRush",
+"Volcanic Energy",
+"Eruption Drink",
+"Molten Charge",
+"BlazeFuel",
+"Inferno Energy",
+"LavaCore",
+"FireBoost",
+"Crater Charge"
+],
+
+typography:[
+"Anton – bold explosive display",
+"Bebas Neue – tall impact type",
+"Oswald – industrial bold sans",
+"Orbitron – tech energy font",
+"Eurostile – futuristic strong type",
+"Impact – explosive headline",
+"Rajdhani – tech sport sans",
+"Oxanium – mechanical energy type",
+"Montserrat – modern bold",
+"Sora – futuristic clean"
+],
+
+colors:[
+"#FF3D00",
+"#FF6D00",
+"#FFAB00",
+"#1A1A1A",
+"#2D2D2D",
+"#FF1744",
+"#FF8F00",
+"#D50000",
+"#FF5722",
+"#212121"
+],
+
+products:[
+"Lava Energy Drink",
+"Magma Charge Shot",
+"Volcano Boost Can",
+"Inferno Pre-Workout",
+"Lava Burst Energy Gel",
+"Molten Hydration Drink",
+"FireBoost Energy Shot",
+"Crater Charge Bottle",
+"LavaRush Sport Drink",
+"Eruption Night Energy"
+],
+
+social:{
+editorial:[
+"Lava texture macro shots",
+"Volcanic landscape visuals",
+"Dark dramatic lighting",
+"Energy drink with fire visuals",
+"Molten glow product photography",
+"Industrial sport aesthetic",
+"Volcano inspired backgrounds",
+"Heat glow product shots",
+"Athletic volcanic campaigns",
+"Red neon energy visuals"
+],
+tiktok:[
+"Energy boost challenge",
+"Extreme workout reels",
+"Energy drink taste tests",
+"Lava effect transitions",
+"Night gym routines",
+"Athlete training edits",
+"Energy drink ASMR open",
+"Before/after workout reels",
+"High energy montage videos",
+"Extreme sports edits"
+],
+ads:[
+"Volcano eruption energy ads",
+"Extreme sports billboards",
+"Fire themed poster campaigns",
+"Energy drink cinematic ads",
+"Molten motion graphics",
+"High performance campaigns",
+"Night athlete advertising",
+"Urban sport poster series",
+"Energy launch teaser ads",
+"Extreme adrenaline campaigns"
+]
+}
+
+},
+
+galaxyJewelry:{
+
+brandNames:[
+"Stellar Gems",
+"Cosmic Gold",
+"Nova Jewelry",
+"Astra Luxe",
+"Orbit Gems",
+"Nebula Jewelry",
+"Galaxy Atelier",
+"Luna Stones",
+"Celestial Gold",
+"Astro Aura"
+],
+
+typography:[
+"Canela – luxury editorial serif",
+"Didot – high fashion serif",
+"Playfair Display – elegant serif",
+"Prata – luxury contrast serif",
+"Cormorant – refined jewelry serif",
+"Gloock – dramatic serif",
+"Sora – futuristic clean",
+"Space Grotesk – modern tech sans",
+"Libre Baskerville – classic elegance",
+"DM Serif – luxury editorial"
+],
+
+colors:[
+"#0B0F2F",
+"#1A237E",
+"#512DA8",
+"#7E57C2",
+"#B39DDB",
+"#F5F5F5",
+"#C0C0C0",
+"#D4AF37",
+"#8C9EFF",
+"#EDE7F6"
+],
+
+products:[
+"Galaxy Diamond Ring",
+"Stellar Pendant Necklace",
+"Nebula Gold Earrings",
+"Cosmic Bracelet",
+"Luna Pearl Ring",
+"Orbit Chain Necklace",
+"Nova Diamond Studs",
+"Celestial Charm Bracelet",
+"Astra Gold Ring",
+"Milky Way Pendant"
+],
+
+social:{
+editorial:[
+"Jewelry floating in space visuals",
+"Galaxy texture macro shots",
+"Dark cosmic product photography",
+"Celestial lighting setups",
+"Star reflection jewelry shots",
+"Luxury cosmic editorial shoots",
+"Nebula gradient backgrounds",
+"Diamond sparkle macro visuals",
+"Midnight luxury jewelry photos",
+"Astronomy inspired campaigns"
+],
+tiktok:[
+"Jewelry sparkle transitions",
+"Luxury unboxing videos",
+"Ring styling tutorials",
+"Celestial aesthetic edits",
+"Jewelry outfit pairings",
+"Galaxy aesthetic reels",
+"Diamond shine closeups",
+"Jewelry routine content",
+"Gift reveal videos",
+"Luxury sparkle slow motion"
+],
+ads:[
+"Cosmic jewelry billboards",
+"Luxury galaxy campaigns",
+"Celestial fashion posters",
+"Space inspired jewelry ads",
+"Midnight diamond campaigns",
+"Nebula luxury visuals",
+"Golden cosmic poster series",
+"High fashion jewelry ads",
+"Celestial runway campaigns",
+"Galaxy themed luxury ads"
+]
+}
+
+}
+
+};
+
+const creativeDirectionExtensions = {
+  banana: {
+    brandPositioning: [
+      "Target Audience: Beauty users who love playful tropical aesthetics and glossy makeup finishes.",
+      "Brand Personality: Bright, juicy, confident, and trend-aware with a premium playful edge.",
+      "Tagline: Peel. Glow. Repeat.",
+      "Category Role: A fruit-forward beauty line that turns fun color stories into everyday luxury.",
+      "Value Promise: High-shine performance products wrapped in sunny, editorial-ready design."
+    ],
+    logoConcepts: [
+      "Minimal Wordmark: Rounded lowercase wordmark with soft banana-yellow accent dot.",
+      "Icon Mark: Abstract banana curve forming a sleek beauty droplet silhouette.",
+      "Badge Logo: Circular tropical seal with stacked type and subtle fruit motif.",
+      "Monogram: PB initials intertwined with a curved peel stroke.",
+      "Editorial Serif Lockup: High-contrast serif paired with compact sans subtitle.",
+      "Soft Bubble Type: Playful bold lettering with glossy highlight treatment.",
+      "Stamp Mark: Premium single-color seal for packaging caps and boxes.",
+      "Motion Logo Concept: Peel line animates into a clean product shine streak."
+    ],
+    packagingIdeas: [
+      "Gloss-coated tubes with curved banana-inspired side profiles and yellow gradient labels.",
+      "Soft-touch cartons with embossed fruit iconography and minimal typography.",
+      "Transparent gloss bottles with metallic caps in warm champagne finish.",
+      "Stackable compact forms using rounded corners and creamy neutral backdrops.",
+      "Limited kit sleeves with editorial photo prints and tonal citrus color blocking."
+    ],
+    marketingCampaignConcepts: [
+      "Campaign Theme: Golden Peel Glow | Visual Direction: High-shine yellow monochrome editorials | Activation Idea: #PeelGlowChallenge creator looks.",
+      "Campaign Theme: Tropical Studio | Visual Direction: Floating product still-lifes with fruit textures | Activation Idea: Pop-up try-on studio with live content wall.",
+      "Campaign Theme: Day-to-Night Banana Glam | Visual Direction: Split-light beauty portraits and gloss macro shots | Activation Idea: Short-form transformation series."
+    ]
+  },
+  cinnamonRollShampoo: {
+    brandPositioning: [
+      "Target Audience: Streetwear-forward consumers seeking expressive, scent-led haircare identity.",
+      "Brand Personality: Warm, cozy, bold, and culture-connected with elevated craft.",
+      "Tagline: Swirl Your Signature.",
+      "Category Role: A crossover between bakery-inspired storytelling and premium hair performance.",
+      "Value Promise: Texture-rich formulas and visual branding that feel collectible and stylish."
+    ],
+    logoConcepts: [
+      "Minimal Wordmark: Clean geometric type with spiral counter details.",
+      "Icon Mark: Cinnamon swirl symbol simplified into a bold circular mark.",
+      "Badge Logo: Bakery label-inspired crest with modern streetwear typography.",
+      "Stencil Type Logo: Utility lettering with soft caramel curve accents.",
+      "Script + Sans Lockup: Sweet script headline with strong secondary sans.",
+      "Monogram: CS initials wrapped in rolling swirl geometry.",
+      "Vertical Wordmark: Tall condensed type for bottle side placement.",
+      "Motion Logo Concept: Swirl line draws on-screen and resolves into brand mark."
+    ],
+    packagingIdeas: [
+      "Amber bottles with matte caramel labels and embossed swirl texture bands.",
+      "Refill pouches in soft kraft tones with minimal bakery-inspired icon set.",
+      "Pump bottles with copper hardware accents and cinnamon gradient sleeves.",
+      "Travel minis bundled in pastry-box inspired rigid paper kit.",
+      "Limited drop wraps featuring collage textures of spice dust and satin hair strands."
+    ],
+    marketingCampaignConcepts: [
+      "Campaign Theme: Roll the Routine | Visual Direction: Warm cinematic bathrooms + spice macros | Activation Idea: GRWM creator remix series.",
+      "Campaign Theme: Street Bakery Hair Club | Visual Direction: Editorial street portraits in caramel palette | Activation Idea: Pop-up styling booth collaborations.",
+      "Campaign Theme: Cinna Shine Nights | Visual Direction: Night flash imagery with glossy hair movement | Activation Idea: Before/after shine challenge."
+    ]
+  },
+  rocketSneakers: {
+    brandPositioning: [
+      "Target Audience: Performance runners and style-driven early adopters of future-forward gear.",
+      "Brand Personality: Precise, ambitious, high-energy, and engineering-led.",
+      "Tagline: Built for Lift-Off.",
+      "Category Role: A technical sneaker line merging aerospace cues with urban movement.",
+      "Value Promise: Speed-driven comfort, futuristic detailing, and iconic silhouette language."
+    ],
+    logoConcepts: [
+      "Minimal Wordmark: Extended sans wordmark with high tracking and sharp terminals.",
+      "Icon Mark: Abstract thrust vector symbol implying forward acceleration.",
+      "Badge Logo: Circular mission patch style emblem adapted for outsole and tongue.",
+      "Monogram: RS initials fused into an aerodynamic forward-leaning form.",
+      "Grid Logo System: Modular typographic blocks for performance and lifestyle lines.",
+      "Numeric Mark: Model-code inspired logo variant for product tiering.",
+      "Wireframe Mark: Line-art insignia referencing technical blueprint drafting.",
+      "Motion Logo Concept: Speed line sweeps into a locked geometric wordmark."
+    ],
+    packagingIdeas: [
+      "Rigid shoe boxes with matte graphite coating and foil thrust-line graphics.",
+      "Inner wraps printed with blueprint schematics and propulsion annotations.",
+      "Limited metallic sleeves featuring reflective silver and red warning typography.",
+      "Reusable drawstring technical mesh bags included as secondary packaging.",
+      "Launch-edition crate format with numbered mission-card inserts."
+    ],
+    marketingCampaignConcepts: [
+      "Campaign Theme: Mission Velocity | Visual Direction: Night track motion blur and neon edge light | Activation Idea: Timed city run events.",
+      "Campaign Theme: Engineered for Orbit | Visual Direction: Technical closeups and CAD overlay graphics | Activation Idea: Interactive fit-lab installations.",
+      "Campaign Theme: Zero to Lift-Off | Visual Direction: Cinematic athlete portraits and launch countdown UI | Activation Idea: Drop-day challenge leaderboard."
+    ]
+  },
+  cottonCandySkincare: {
+    brandPositioning: [
+      "Target Audience: Gen Z and millennial skincare users who value softness, ritual, and visual identity.",
+      "Brand Personality: Dreamy, gentle, optimistic, and sensorially expressive.",
+      "Tagline: Cloud-Level Skin.",
+      "Category Role: Pastel-forward hydration skincare with editorial softness.",
+      "Value Promise: Lightweight formulas with comforting textures and aesthetic shelf appeal."
+    ],
+    logoConcepts: [
+      "Minimal Wordmark: Rounded sans logotype with airy spacing and delicate curves.",
+      "Icon Mark: Cloud droplet symbol combining hydration and softness cues.",
+      "Badge Logo: Pastel seal with ring text for jars, lids, and social avatars.",
+      "Monogram: CS monoline letters woven into cotton-like loop shapes.",
+      "Script Accent Lockup: Soft script signature paired with clean sans base.",
+      "Bubble Mark: Dot-cluster icon for playful secondary branding moments.",
+      "Stacked Logo: Vertical type arrangement for compact packaging fronts.",
+      "Motion Logo Concept: Mist particles gather into a clean symbol reveal."
+    ],
+    packagingIdeas: [
+      "Frosted jars with pastel gradient sleeves and satin-touch labels.",
+      "Airless pump bottles with soft pink/blue translucent caps.",
+      "Refill pods in mono-pastel color coding for routine steps.",
+      "Gift set box with cotton-texture paper and silver foil accents.",
+      "Mini mist sprays in cloud-shaped travel-friendly silhouettes."
+    ],
+    marketingCampaignConcepts: [
+      "Campaign Theme: Soft Skin, Soft World | Visual Direction: Cloud sets, haze gradients, soft-focus portraits | Activation Idea: Morning ritual creator series.",
+      "Campaign Theme: Pastel Hydration Club | Visual Direction: Product texture loops and ASMR closeups | Activation Idea: Weekly UGC skin diary challenge.",
+      "Campaign Theme: Dream Routine | Visual Direction: Day/night split palettes and floating product stills | Activation Idea: Interactive routine builder."
+    ]
+  },
+  pizzaPerfume: {
+    brandPositioning: [
+      "Target Audience: Niche fragrance collectors and culture-first trend explorers.",
+      "Brand Personality: Surreal, luxurious, ironic, and unforgettable.",
+      "Tagline: Scented Like a Statement.",
+      "Category Role: Conceptual luxury fragrance blurring culinary nostalgia with fashion narrative.",
+      "Value Promise: Signature olfactive storytelling packaged in provocative editorial form."
+    ],
+    logoConcepts: [
+      "Minimal Wordmark: High-fashion serif wordmark with restrained spacing.",
+      "Icon Mark: Stylized slice geometry abstracted into a luxe emblem.",
+      "Badge Logo: Italian crest-inspired medallion with modern typography.",
+      "Monogram: SP initials sculpted into circular bottle-cap symbol.",
+      "No. Series Lockup: Numbered edition mark system for collectible drops.",
+      "Stamp Mark: Wax-seal style icon for boxes and campaign assets.",
+      "Editorial Titleplate: Magazine masthead-inspired logo treatment.",
+      "Motion Logo Concept: Oil droplet morphs into the core wordmark."
+    ],
+    packagingIdeas: [
+      "Deep red glass bottles with matte black caps and gold foil numbering.",
+      "Marble-texture cartons with subtle tomato-red edge painting.",
+      "Collector sleeves with ingredient illustration etchings in metallic ink.",
+      "Travel spray tubes in brushed aluminum with serif laser marking.",
+      "Gift coffret with layered drawer reveal and scent story cards."
+    ],
+    marketingCampaignConcepts: [
+      "Campaign Theme: Haute Slice | Visual Direction: Italian marble + culinary surrealism | Activation Idea: Limited tasting + scent pairing event.",
+      "Campaign Theme: Aroma di Notte | Visual Direction: Dark cinematic restaurant interiors and glossy stills | Activation Idea: Midnight launch short film.",
+      "Campaign Theme: No.5 Reimagined | Visual Direction: Archive-fashion styling with food texture overlays | Activation Idea: Collector drop with numbered bottles."
+    ]
+  },
+  volcanoEnergyDrink: {
+    brandPositioning: [
+      "Target Audience: High-intensity fitness, gaming, and action-sport communities.",
+      "Brand Personality: Fierce, high-voltage, relentless, and performance-first.",
+      "Tagline: Ignite the Core.",
+      "Category Role: Volcanic-themed energy platform for peak output moments.",
+      "Value Promise: Fast-impact energy narrative with premium aggressive branding."
+    ],
+    logoConcepts: [
+      "Minimal Wordmark: Bold condensed type with angled volcanic cuts.",
+      "Icon Mark: Crater/eruption symbol simplified into a striking glyph.",
+      "Badge Logo: Sport-emblem crest for can tops and merch patches.",
+      "Monogram: MF or LC initials shaped as heatwave contours.",
+      "Tech Display Mark: Futuristic modular lettering for high-speed media.",
+      "Warning Stripe Lockup: Utility logo with hazard-line accents.",
+      "Stamp Icon: Circular magma seal for social avatars and stickers.",
+      "Motion Logo Concept: Molten crack effect revealing final wordmark."
+    ],
+    packagingIdeas: [
+      "Tall matte-black cans with lava-red UV gloss veins.",
+      "Heat-reactive ink labels that reveal glow graphics when chilled/warmed.",
+      "Grip-texture can sleeves inspired by volcanic rock surfaces.",
+      "Multipack cartons with torn-edge magma illustration patterning.",
+      "Limited edition collector cans with metallic ember foil gradients."
+    ],
+    marketingCampaignConcepts: [
+      "Campaign Theme: Eruption Mode | Visual Direction: Explosive red-black motion graphics | Activation Idea: High-score gaming challenge integration.",
+      "Campaign Theme: Core Charge | Visual Direction: Athlete training sequences in molten lighting | Activation Idea: City workout takeover events.",
+      "Campaign Theme: Night Ignition | Visual Direction: Neon sport portraits and can glow closeups | Activation Idea: Night run social campaign."
+    ]
+  },
+  galaxyJewelry: {
+    brandPositioning: [
+      "Target Audience: Luxury jewelry buyers seeking celestial storytelling and modern elegance.",
+      "Brand Personality: Ethereal, sophisticated, luminous, and timeless.",
+      "Tagline: Wear the Constellation.",
+      "Category Role: Cosmic fine-jewelry system balancing high fashion and astronomy cues.",
+      "Value Promise: Elegant craftsmanship framed through rich celestial visual language."
+    ],
+    logoConcepts: [
+      "Minimal Wordmark: Elegant serif wordmark with generous luxury spacing.",
+      "Icon Mark: Star-orbit glyph combining ring and celestial axis motif.",
+      "Badge Logo: Celestial medallion crest for packaging and authenticity cards.",
+      "Monogram: SG/CG initials crafted into constellation-like line geometry.",
+      "Diamond Mark: Faceted icon adapted as clasp engraving signature.",
+      "High Contrast Lockup: Didot-style masthead treatment with subtle star accent.",
+      "Vertical Signature: Tall lockup for pendant tags and care cards.",
+      "Motion Logo Concept: Constellation points connect into final logo reveal."
+    ],
+    packagingIdeas: [
+      "Midnight navy rigid boxes with velvet inserts and silver foil stars.",
+      "Magnetic closure cases with subtle nebula gradient inner lining.",
+      "Certification cards on pearlescent stock with debossed orbit motif.",
+      "Travel pouches in soft metallic fabric with minimalist logo stamp.",
+      "Collector trunk set with modular compartments for rings and pendants."
+    ],
+    marketingCampaignConcepts: [
+      "Campaign Theme: Celestial Atelier | Visual Direction: Dark luxe editorials with starlight sparkle macros | Activation Idea: Personalized zodiac styling consults.",
+      "Campaign Theme: Orbit of Gold | Visual Direction: Metallic gradients and high-contrast fashion portraiture | Activation Idea: Digital lookbook launch with virtual try-on.",
+      "Campaign Theme: Night Constellation | Visual Direction: Runway-inspired cosmic backdrops and jewelry motion closeups | Activation Idea: Limited celestial capsule drop."
+    ]
+  }
+};
+
+function enterApp() {
+  const landing = document.getElementById("landing");
+  const app = document.getElementById("app");
+  landing.classList.add("hidden");
+  app.classList.add("visible");
+}
+
+const ui = {
+  app: document.getElementById("app"),
+  landing: document.getElementById("landing"),
+  heroShell: document.getElementById("heroShell"),
+  workspaceContent: document.getElementById("workspaceContent"),
+  sidebar: document.querySelector(".sidebar"),
+  textarea: document.getElementById("conceptInput"),
+  generateBtn: document.getElementById("generateBtn"),
+  loadingHint: document.getElementById("loadingHint"),
+  clearBtn: document.getElementById("clearBtn"),
+  saveIdeaBtn: document.getElementById("saveIdeaBtn"),
+  savedIdeasBtn: document.getElementById("savedIdeasBtn"),
+  savedIdeasMenu: document.getElementById("savedIdeasMenu"),
+  newBtn: document.getElementById("newBtn"),
+  chips: Array.from(document.querySelectorAll(".chip")),
+  tabs: Array.from(document.querySelectorAll(".sidebar .tab")),
+  snapshotBtn: document.getElementById("snapshotBtn"),
+  copySnapshotBtn: document.getElementById("copySnapshotBtn"),
+  contentCard: document.getElementById("contentCard"),
+  downloadWrap: document.getElementById("footerDownload"),
+  downloadBtn: document.getElementById("downloadBtn"),
+  snapshotModal: document.getElementById("snapshotModal"),
+  closeSnapshotBtn: document.getElementById("closeSnapshotBtn"),
+  snapshotContent: document.getElementById("snapshotContent"),
+  toastStack: document.getElementById("toastStack")
+};
+
+const tabKeys = [
+  "brandNames",
+  "typography",
+  "colors",
+  "products",
+  "social",
+  "moodboard",
+  "brandPositioning",
+  "logoConcepts",
+  "packagingIdeas",
+  "marketingCampaignConcepts"
+];
+const tabTitles = {
+  brandNames: "Brand Name Ideas",
+  typography: "Typography",
+  colors: "Color Palette",
+  products: "Product Ideas",
+  social: "Social Strategy",
+  moodboard: "Moodboard",
+  brandPositioning: "Brand Positioning",
+  logoConcepts: "Logo Concepts",
+  packagingIdeas: "Packaging Ideas",
+  marketingCampaignConcepts: "Marketing Campaign Concepts"
+};
+
+let selectedKey = "banana";
+let activeTab = null;
+let hasGenerated = false;
+const loadedFonts = new Set();
+let typographyPreviewText = "Aether Visual Language";
+const imageCache = new Map();
+let refinementTone = null;
+let currentConcept = "";
+const savedIdeasKey = "aetherSavedIdeas";
+
+const tabMeta = {
+  brandNames: { icon: "✦", label: "Brand Names", countKey: "brandNames" },
+  typography: { icon: "T", label: "Typography", countKey: "typography" },
+  colors: { icon: "●", label: "Colors", countKey: "colors" },
+  products: { icon: "□", label: "Products", countKey: "products" },
+  social: { icon: "⚡", label: "Social", countKey: "social.editorial" },
+  moodboard: { icon: "◇", label: "Moodboard", countKey: "social.ads" },
+  brandPositioning: { icon: "◎", label: "Brand Positioning", countKey: "ext.brandPositioning" },
+  logoConcepts: { icon: "⌁", label: "Logo Concepts", countKey: "ext.logoConcepts" },
+  packagingIdeas: { icon: "▣", label: "Packaging Ideas", countKey: "ext.packagingIdeas" },
+  marketingCampaignConcepts: { icon: "⚑", label: "Marketing Campaign Concepts", countKey: "ext.marketingCampaignConcepts" }
+};
+
+function detectDataKey(input) {
+  const text = input.toLowerCase();
+  if (text.includes("banana")) return "banana";
+  if (text.includes("cinnamon") || text.includes("roll") || text.includes("shampoo")) return "cinnamonRollShampoo";
+  if (text.includes("rocket") || text.includes("sneaker") || text.includes("shoe")) return "rocketSneakers";
+  if (text.includes("cotton candy") || text.includes("skincare") || text.includes("cotton")) return "cottonCandySkincare";
+  if (text.includes("pizza") || text.includes("perfume")) return "pizzaPerfume";
+  if (text.includes("volcano") || text.includes("lava") || text.includes("magma") || text.includes("energy")) return "volcanoEnergyDrink";
+  if (text.includes("galaxy") || text.includes("cosmic") || text.includes("jewelry")) return "galaxyJewelry";
+  return "banana";
+}
+
+function detectRefinementTone(input) {
+  const text = input.toLowerCase();
+  if (text.includes("luxury")) return "luxury";
+  if (text.includes("minimal")) return "minimal";
+  if (text.includes("playful")) return "playful";
+  if (text.includes("editorial")) return "editorial";
+  if (text.includes("formal")) return "formal";
+  return null;
+}
+
+function toneProfiles() {
+  return {
+    luxury: {
+      brand: (s) => `Maison ${s}`,
+      type: (s) => `${s} — runway-grade refinement`,
+      product: (s) => `Signature ${s}`,
+      social: (s) => `${s} with couture finish`,
+      colorCaption: "Palette Direction: elevated, premium, fashion-house contrast."
+    },
+    minimal: {
+      brand: (s) => `${s.split(" ")[0]}`,
+      type: (s) => `${s} — reduced, modern hierarchy`,
+      product: (s) => `${s} Core`,
+      social: (s) => `${s} in clean, restrained frames`,
+      colorCaption: "Palette Direction: calm, distilled, modern simplicity."
+    },
+    playful: {
+      brand: (s) => `${s} Pop`,
+      type: (s) => `${s} — soft, expressive, energetic`,
+      product: (s) => `${s} Fun Edition`,
+      social: (s) => `${s} with bright, upbeat energy`,
+      colorCaption: "Palette Direction: lively contrasts and approachable color energy."
+    },
+    editorial: {
+      brand: (s) => `Studio ${s}`,
+      type: (s) => `${s} — magazine-led narrative styling`,
+      product: (s) => `${s} Editorial Cut`,
+      social: (s) => `${s} with campaign storytelling`,
+      colorCaption: "Palette Direction: image-led tones for editorial sequencing."
+    },
+    formal: {
+      brand: (s) => `${s} Group`,
+      type: (s) => `${s} — structured professional hierarchy`,
+      product: (s) => `${s} Professional`,
+      social: (s) => `${s} in polished corporate framing`,
+      colorCaption: "Palette Direction: balanced, professional, presentation-ready."
+    }
+  };
+}
+
+function getDisplayData(baseData, tone) {
+  if (!tone) return baseData;
+  const profile = toneProfiles()[tone];
+  if (!profile) return baseData;
+  return {
+    ...baseData,
+    brandNames: baseData.brandNames.map(profile.brand),
+    typography: baseData.typography.map(profile.type),
+    products: baseData.products.map(profile.product),
+    social: {
+      editorial: baseData.social.editorial.map(profile.social),
+      tiktok: baseData.social.tiktok.map(profile.social),
+      ads: baseData.social.ads.map(profile.social)
+    }
+  };
+}
+
+function showToast(message) {
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.textContent = message;
+  ui.toastStack.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = "0";
+    el.style.transform = "translateY(4px)";
+    setTimeout(() => el.remove(), 180);
+  }, 1400);
+}
+
+async function copyTextToClipboard(text, successMessage = "Copied.") {
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast(successMessage);
+  } catch (_err) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+    showToast(successMessage);
+  }
+}
+
+function getCountFromData(data, extData, countKey) {
+  if (!countKey.includes(".")) return (data[countKey] || []).length;
+  const [key, nested] = countKey.split(".");
+  if (key === "ext") return (extData[nested] || []).length;
+  return ((data[key] || {})[nested] || []).length;
+}
+
+function refreshSidebarLabels() {
+  const data = aetherData[selectedKey];
+  const extData = creativeDirectionExtensions[selectedKey] || {};
+  ui.tabs.forEach((btn, idx) => {
+    const tabKey = tabKeys[idx];
+    const meta = tabMeta[tabKey];
+    const count = getCountFromData(data, extData, meta.countKey);
+    btn.innerHTML = `<span style="opacity:.85;margin-right:8px;">${meta.icon}</span>${meta.label} (${count})`;
+  });
+}
+
+function getSavedIdeas() {
+  try {
+    return JSON.parse(localStorage.getItem(savedIdeasKey) || "[]");
+  } catch (_err) {
+    return [];
+  }
+}
+
+function setSavedIdeas(items) {
+  localStorage.setItem(savedIdeasKey, JSON.stringify(items.slice(0, 20)));
+}
+
+function renderSavedIdeasMenu() {
+  const items = getSavedIdeas();
+  if (!items.length) {
+    ui.savedIdeasMenu.innerHTML = `<div class="saved-item" style="cursor:default;">No saved ideas yet.</div>`;
+    return;
+  }
+  ui.savedIdeasMenu.innerHTML = items
+    .map((item, idx) => `<button class="saved-item" data-saved-index="${idx}">${item.prompt}<small>${item.key}</small></button>`)
+    .join("");
+}
+
+function ensureFontLoaded(fontFamily) {
+  const family = fontFamily.trim();
+  if (!family || loadedFonts.has(family)) return;
+  loadedFonts.add(family);
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family).replace(/%20/g, "+")}:wght@400;500;600&display=swap`;
+  document.head.appendChild(link);
+}
+
+function extractFontFamily(item) {
+  const byEnDash = item.split("–")[0].trim();
+  const byDash = byEnDash.split("-")[0].trim();
+  return byDash || "Inter";
+}
+
+function renderList(title, items) {
+  return `
+    <div class="section-title">${title}</div>
+    <div class="bullet-list">
+      ${items.map((item) => `
+        <div class="copy-row">
+          <span class="copy-item">${item}</span>
+          <button class="copy-icon" data-copy="${item.replace(/"/g, "&quot;")}">⧉</button>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderColors(colors) {
+  const caption = refinementTone ? toneProfiles()[refinementTone].colorCaption : "";
+  return `
+    <div class="section-title">${tabTitles.colors}</div>
+    ${caption ? `<p style="margin:-4px 0 16px;color:#746c65;">${caption}</p>` : ""}
+    <div class="palette-grid">
+      ${colors.map((c) => `<div class="swatch" style="background:${c};"></div>`).join("")}
+    </div>
+    <div class="bullet-list">
+      ${colors.map((c) => `
+        <div class="copy-row">
+          <span class="copy-item">${c}</span>
+          <button class="copy-icon" data-copy="${c}">⧉</button>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderTypography(items) {
+  return `
+    <div class="type-head">
+      <div class="section-title">${tabTitles.typography}</div>
+      <div class="preview-input-wrap">
+        <label for="typePreviewInput">Preview Text</label>
+        <input id="typePreviewInput" class="preview-input" value="${typographyPreviewText}" />
+      </div>
+    </div>
+    ${items.map((item) => {
+      const family = extractFontFamily(item);
+      ensureFontLoaded(family);
+      return `
+        <div class="type-item">
+          <div class="copy-row">
+            <div class="copy-item">${item}</div>
+            <button class="copy-icon" data-copy="${item.replace(/"/g, "&quot;")}">⧉</button>
+          </div>
+          <div class="font-sample" style="font-family:'${family}', sans-serif;">${typographyPreviewText}</div>
+        </div>
+      `;
+    }).join("")}
+  `;
+}
+
+function renderSocial(social) {
+  return `
+    <div class="section-title">${tabTitles.social}</div>
+    <div class="social-tabs">
+      <button class="social-tab active" data-social-tab="editorial">Editorial</button>
+      <button class="social-tab" data-social-tab="tiktok">TikTok</button>
+      <button class="social-tab" data-social-tab="ads">Ads</button>
+    </div>
+    <div id="socialContentArea"></div>
+  `;
+}
+
+function renderMoodboard(data) {
+  const ideas = [...data.social.editorial.slice(0, 5), ...data.social.ads.slice(0, 5)];
+  return `
+    <div class="section-title">${tabTitles.moodboard}</div>
+    <div class="mood-tabs">
+      <button class="mood-tab active" data-mood-tab="concept">Concept</button>
+      <button class="mood-tab" data-mood-tab="images">Images</button>
+    </div>
+    <div id="moodContentArea">
+      ${renderList("Concept", ideas)}
+    </div>
+  `;
+}
+
+function conceptFolderFromKey(key) {
+  const map = {
+    banana: "banana",
+    cinnamonRollShampoo: "cinnamon",
+    rocketSneakers: "rocket",
+    cottonCandySkincare: "cotton-candy",
+    pizzaPerfume: "pizza",
+    volcanoEnergyDrink: "volcano",
+    galaxyJewelry: "galaxy"
+  };
+  return map[key] || "banana";
+}
+
+function imageCandidates(folder) {
+  const files = [];
+  const exts = ["jpg", "jpeg", "png", "webp"];
+  for (let i = 1; i <= 12; i += 1) {
+    exts.forEach((ext) => files.push(`/images/${folder}/${i}.${ext}`));
+  }
+  return files;
+}
+
+function probeImage(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(src);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+
+async function resolveLocalImagesForConcept(key) {
+  if (imageCache.has(key)) return imageCache.get(key);
+  const folder = conceptFolderFromKey(key);
+  const candidates = imageCandidates(folder);
+  const results = await Promise.all(candidates.map((src) => probeImage(src)));
+  const found = results.filter(Boolean).slice(0, 9);
+  imageCache.set(key, found);
+  return found;
+}
+
+function renderSocialChannel(channel, social) {
+  const target = document.getElementById("socialContentArea");
+  if (!target) return;
+  const items = social[channel] || [];
+  target.classList.remove("fade-in");
+  target.innerHTML = `
+    <div class="bullet-list">
+      ${items.map((item) => `
+        <div class="copy-row">
+          <span class="copy-item">${item}</span>
+          <button class="copy-icon" data-copy="${item.replace(/"/g, "&quot;")}">⧉</button>
+        </div>
+      `).join("")}
+    </div>
+  `;
+  void target.offsetWidth;
+  target.classList.add("fade-in");
+  bindCopyIcons(target);
+}
+
+function bindSocialTabs(social) {
+  const tabs = Array.from(document.querySelectorAll(".social-tab"));
+  if (!tabs.length) return;
+  renderSocialChannel("editorial", social);
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      renderSocialChannel(tab.dataset.socialTab, social);
+    });
+  });
+}
+
+function bindTypographyPreview() {
+  const input = document.getElementById("typePreviewInput");
+  if (!input) return;
+  input.addEventListener("input", () => {
+    typographyPreviewText = input.value.trim() || "Aether Visual Language";
+    document.querySelectorAll(".font-sample").forEach((sample) => {
+      sample.textContent = typographyPreviewText;
+    });
+  });
+}
+
+function bindCopyIcons(root = document) {
+  root.querySelectorAll(".copy-icon").forEach((btn) => {
+    if (btn.dataset.bound === "1") return;
+    btn.dataset.bound = "1";
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      copyTextToClipboard(btn.dataset.copy || "", "Copied.");
+    });
+  });
+}
+
+async function renderMoodboardImages() {
+  const target = document.getElementById("moodContentArea");
+  if (!target) return;
+  target.innerHTML = `<div class="empty-state">Loading curated visuals...</div>`;
+  const images = await resolveLocalImagesForConcept(selectedKey);
+  if (!images.length) {
+    target.innerHTML = `<div class="empty-state">Moodboard visual generation coming soon.<br>Future versions of Aether will generate visual references based on your brand concept.</div>`;
+    return;
+  }
+  target.innerHTML = `
+    <div class="mood-grid fade-in">
+      ${images.map((src) => `<img class="mood-image" src="${src}" alt="Moodboard visual">`).join("")}
+    </div>
+  `;
+}
+
+function bindMoodTabs(data) {
+  const tabs = Array.from(document.querySelectorAll(".mood-tab"));
+  const target = document.getElementById("moodContentArea");
+  if (!tabs.length || !target) return;
+  const concepts = [...data.social.editorial.slice(0, 5), ...data.social.ads.slice(0, 5)];
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", async () => {
+      tabs.forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      target.classList.remove("fade-in");
+      void target.offsetWidth;
+      target.classList.add("fade-in");
+      if (tab.dataset.moodTab === "concept") {
+        target.innerHTML = renderList("Concept", concepts);
+        bindCopyIcons(target);
+      } else {
+        await renderMoodboardImages();
+      }
+    });
+  });
+}
+
+function renderActiveTab(withAnimation = true) {
+  const baseData = aetherData[selectedKey];
+  const extData = creativeDirectionExtensions[selectedKey] || {};
+  const data = getDisplayData(baseData, refinementTone);
+
+  if (activeTab === "brandNames") ui.contentCard.innerHTML = renderList(tabTitles.brandNames, data.brandNames);
+  if (activeTab === "typography") ui.contentCard.innerHTML = renderTypography(data.typography);
+  if (activeTab === "colors") ui.contentCard.innerHTML = renderColors(data.colors);
+  if (activeTab === "products") ui.contentCard.innerHTML = renderList(tabTitles.products, data.products);
+  if (activeTab === "social") {
+    ui.contentCard.innerHTML = renderSocial(data.social);
+    bindSocialTabs(data.social);
+  }
+  if (activeTab === "moodboard") {
+    ui.contentCard.innerHTML = renderMoodboard(data);
+    bindMoodTabs(data);
+  }
+  if (activeTab === "brandPositioning") ui.contentCard.innerHTML = renderList(tabTitles.brandPositioning, extData.brandPositioning || []);
+  if (activeTab === "logoConcepts") ui.contentCard.innerHTML = renderList(tabTitles.logoConcepts, extData.logoConcepts || []);
+  if (activeTab === "packagingIdeas") ui.contentCard.innerHTML = renderList(tabTitles.packagingIdeas, extData.packagingIdeas || []);
+  if (activeTab === "marketingCampaignConcepts") ui.contentCard.innerHTML = renderList(tabTitles.marketingCampaignConcepts, extData.marketingCampaignConcepts || []);
+  if (activeTab === "typography") {
+    bindTypographyPreview();
+  }
+
+  if (withAnimation) {
+    ui.contentCard.classList.remove("fade-in");
+    void ui.contentCard.offsetWidth;
+    ui.contentCard.classList.add("fade-in");
+  }
+  bindCopyIcons(ui.contentCard);
+}
+
+function setActiveTab(tabIndex) {
+  if (!hasGenerated) return;
+  ui.tabs.forEach((tab, i) => tab.classList.toggle("active", i === tabIndex));
+  activeTab = tabKeys[tabIndex];
+  ui.contentCard.classList.remove("fade-in");
+  ui.contentCard.classList.add("fade-out");
+  setTimeout(() => {
+    ui.contentCard.classList.remove("fade-out");
+    renderActiveTab();
+  }, 130);
+  ui.downloadWrap.style.display = "block";
+}
+
+function formatBrandSnapshotText(data) {
+  const ext = creativeDirectionExtensions[selectedKey] || {};
+  const moodConcept = [...data.social.editorial.slice(0, 5), ...data.social.ads.slice(0, 5)];
+  return `AETHER BRAND SNAPSHOT
+
+Concept:
+${currentConcept || "(No concept entered)"}
+
+Brand Names:
+${data.brandNames.join("\n")}
+
+Typography:
+${data.typography.join("\n")}
+
+Colors:
+${data.colors.join("\n")}
+
+Products:
+${data.products.join("\n")}
+
+Social Editorial:
+${data.social.editorial.join("\n")}
+
+Social TikTok:
+${data.social.tiktok.join("\n")}
+
+Social Ads:
+${data.social.ads.join("\n")}
+
+Moodboard Concept:
+${moodConcept.join("\n")}
+
+Brand Positioning:
+${(ext.brandPositioning || []).join("\n")}
+
+Logo Concepts:
+${(ext.logoConcepts || []).join("\n")}
+
+Packaging Ideas:
+${(ext.packagingIdeas || []).join("\n")}
+
+Marketing Campaign Concepts:
+${(ext.marketingCampaignConcepts || []).join("\n")}
+`;
+}
+
+function buildBriefText(data) {
+  const ext = creativeDirectionExtensions[selectedKey] || {};
+  const moodConcept = [...data.social.editorial.slice(0, 5), ...data.social.ads.slice(0, 5)];
+  return `AETHER CREATIVE BRIEF
+
+Concept:
+${currentConcept || "(No concept entered)"}
+
+Brand Names:
+${data.brandNames.join("\n")}
+
+Typography:
+${data.typography.join("\n")}
+
+Colors:
+${data.colors.join("\n")}
+
+Products:
+${data.products.join("\n")}
+
+Social Editorial:
+${data.social.editorial.join("\n")}
+
+Social TikTok:
+${data.social.tiktok.join("\n")}
+
+Social Ads:
+${data.social.ads.join("\n")}
+
+Moodboard:
+${moodConcept.join("\n")}
+
+Brand Positioning:
+${(ext.brandPositioning || []).join("\n")}
+
+Logo Concepts:
+${(ext.logoConcepts || []).join("\n")}
+
+Packaging Ideas:
+${(ext.packagingIdeas || []).join("\n")}
+
+Marketing Campaign Concepts:
+${(ext.marketingCampaignConcepts || []).join("\n")}
+`;
+}
+
+function downloadBrief() {
+  const data = getDisplayData(aetherData[selectedKey], refinementTone);
+  const blob = new Blob([buildBriefText(data)], { type: "text/plain" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "creative-brief.txt";
+  a.click();
+}
+
+function buildSnapshotSheet(data) {
+  const ext = creativeDirectionExtensions[selectedKey] || {};
+  const typographyRows = data.typography.map((item) => {
+    const family = extractFontFamily(item);
+    ensureFontLoaded(family);
+    return `<div class="type-item"><div>${item}</div><div class="font-sample" style="font-family:'${family}', sans-serif;">${typographyPreviewText}</div></div>`;
+  }).join("");
+
+  return `
+    <div class="sheet-card">
+      <div class="section-title">Brand Names</div>
+      <div class="bullet-list">${data.brandNames.map((b) => `<span>${b}</span>`).join("")}</div>
+    </div>
+    <div class="sheet-card">
+      <div class="section-title">Typography</div>
+      ${typographyRows}
+    </div>
+    <div class="sheet-card">
+      <div class="section-title">Colors</div>
+      <div class="palette-grid">${data.colors.map((c) => `<div class="swatch" style="background:${c}"></div>`).join("")}</div>
+      <div class="bullet-list">${data.colors.map((c) => `<span>${c}</span>`).join("")}</div>
+    </div>
+    <div class="sheet-card">
+      <div class="section-title">Products</div>
+      <div class="bullet-list">${data.products.map((p) => `<span>${p}</span>`).join("")}</div>
+    </div>
+    <div class="sheet-card">
+      <div class="section-title">Brand Positioning</div>
+      <div class="bullet-list">${(ext.brandPositioning || []).map((v) => `<span>${v}</span>`).join("")}</div>
+    </div>
+    <div class="sheet-card">
+      <div class="section-title">Logo Concepts</div>
+      <div class="bullet-list">${(ext.logoConcepts || []).map((v) => `<span>${v}</span>`).join("")}</div>
+    </div>
+    <div class="sheet-card">
+      <div class="section-title">Packaging Ideas</div>
+      <div class="bullet-list">${(ext.packagingIdeas || []).map((v) => `<span>${v}</span>`).join("")}</div>
+    </div>
+    <div class="sheet-card">
+      <div class="section-title">Marketing Campaign Concepts</div>
+      <div class="bullet-list">${(ext.marketingCampaignConcepts || []).map((v) => `<span>${v}</span>`).join("")}</div>
+    </div>
+  `;
+}
+
+function openSnapshot() {
+  const data = getDisplayData(aetherData[selectedKey], refinementTone);
+  ui.snapshotContent.innerHTML = buildSnapshotSheet(data);
+  ui.snapshotModal.classList.add("open");
+  showToast("✓ Creative Brief exported");
+}
+
+function saveCurrentIdea() {
+  const prompt = ui.textarea.value.trim();
+  const key = detectDataKey(prompt || selectedKey);
+  const items = getSavedIdeas();
+  items.unshift({
+    prompt: prompt || "(Untitled idea)",
+    key,
+    savedAt: Date.now()
+  });
+  setSavedIdeas(items);
+  renderSavedIdeasMenu();
+  showToast("Idea saved.");
+}
+
+function copyBrandSnapshot() {
+  const data = getDisplayData(aetherData[selectedKey], refinementTone);
+  copyTextToClipboard(formatBrandSnapshotText(data), "Brand snapshot copied to clipboard.");
+}
+
+function loadSavedIdea(index) {
+  const items = getSavedIdeas();
+  const entry = items[index];
+  if (!entry) return;
+  ui.textarea.value = entry.prompt === "(Untitled idea)" ? "" : entry.prompt;
+  selectedKey = entry.key || detectDataKey(ui.textarea.value);
+  refinementTone = detectRefinementTone(ui.textarea.value);
+  refreshSidebarLabels();
+  if (hasGenerated && activeTab) renderActiveTab(false);
+  ui.savedIdeasMenu.classList.remove("open");
+  showToast("Saved idea loaded.");
+}
+
+function resetIdea() {
+  ui.textarea.value = "";
+  ui.generateBtn.innerText = "Generate Direction";
+  selectedKey = "banana";
+  currentConcept = "";
+  activeTab = null;
+  hasGenerated = false;
+  refinementTone = null;
+  ui.app.classList.remove("workspace-mode");
+  ui.app.classList.add("hero-mode");
+  ui.tabs.forEach((tab) => tab.classList.remove("active"));
+  ui.contentCard.innerHTML = "";
+  ui.downloadWrap.style.display = "none";
+  refreshSidebarLabels();
+}
+
+async function toggleGenerate() {
+  if (ui.generateBtn.disabled) return;
+  const concept = ui.textarea.value.trim();
+  currentConcept = concept;
+  selectedKey = detectDataKey(concept);
+  refinementTone = detectRefinementTone(concept);
+  ui.generateBtn.disabled = true;
+  ui.loadingHint.textContent = "Analyzing concept...";
+  ui.generateBtn.innerText = "Generating...";
+  await new Promise((resolve) => setTimeout(resolve, 600));
+  ui.generateBtn.disabled = false;
+  ui.generateBtn.innerText = "Refine Direction";
+  ui.loadingHint.textContent = "";
+  hasGenerated = true;
+  refreshSidebarLabels();
+  ui.app.classList.remove("hero-mode");
+  ui.app.classList.add("workspace-mode");
+  ui.workspaceContent.classList.add("fade-in");
+  ui.workspaceContent.classList.remove("fade-in");
+  void ui.workspaceContent.offsetWidth;
+  ui.workspaceContent.classList.add("fade-in");
+  ui.downloadWrap.style.display = "block";
+
+  // Always show Brand Names immediately after generation.
+  setActiveTab(0);
+}
+
+ui.tabs.forEach((tab, index) => {
+  tab.addEventListener("click", () => setActiveTab(index));
+});
+
+ui.clearBtn.addEventListener("click", () => {
+  ui.textarea.value = "";
+  ui.loadingHint.textContent = "";
+  ui.textarea.focus();
+});
+
+ui.chips.forEach((chip) => {
+  chip.addEventListener("click", () => {
+    ui.textarea.value = chip.dataset.concept || "";
+    ui.textarea.focus();
+  });
+});
+
+ui.newBtn.addEventListener("click", resetIdea);
+ui.saveIdeaBtn.addEventListener("click", saveCurrentIdea);
+ui.savedIdeasBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  renderSavedIdeasMenu();
+  ui.savedIdeasMenu.classList.toggle("open");
+});
+ui.savedIdeasMenu.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-saved-index]");
+  if (!btn) return;
+  loadSavedIdea(Number(btn.dataset.savedIndex));
+});
+ui.downloadBtn.addEventListener("click", downloadBrief);
+ui.snapshotBtn.addEventListener("click", openSnapshot);
+ui.copySnapshotBtn.addEventListener("click", copyBrandSnapshot);
+ui.closeSnapshotBtn.addEventListener("click", () => ui.snapshotModal.classList.remove("open"));
+ui.snapshotModal.addEventListener("click", (e) => {
+  if (e.target === ui.snapshotModal) ui.snapshotModal.classList.remove("open");
+});
+document.addEventListener("click", (e) => {
+  if (!ui.savedIdeasMenu.contains(e.target) && e.target !== ui.savedIdeasBtn) {
+    ui.savedIdeasMenu.classList.remove("open");
+  }
+});
+ui.downloadWrap.style.display = "none";
+ui.app.classList.add("hero-mode");
+refreshSidebarLabels();
+
+ui.textarea.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    toggleGenerate();
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+    e.preventDefault();
+    ui.textarea.focus();
+    ui.textarea.select();
+  }
+  if (e.key === "Escape") {
+    ui.textarea.value = "";
+    ui.loadingHint.textContent = "";
+  }
+});
+
+</script>
+
+</body>
+</html>

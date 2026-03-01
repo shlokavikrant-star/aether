@@ -1,0 +1,13 @@
+{
+  "name": "aether",
+  "version": "1.0.0",
+  "description": "Aether mobile web app for generating visual design directions",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
